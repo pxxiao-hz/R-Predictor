@@ -152,8 +152,6 @@ R-Predictor will return 15 protein sequence files, each corresponding to a plant
   xx.n.fasta
 ~~~
 ## Citations
-Deep learning facilitates precise identification of disease-resistance genes in plants
-Zhenya Liu, Xu Wang, Shuo Cao, Tingyue Lei, Yifu Chenzhu, Mengyan Zhang, Zhongqi Liu, Jianzhong Lu, Wenqi Ma, Bingxiong Su, Yiwen Wang, Yongfeng Zhou
-bioRxiv 2024.09.26.615248; doi: https://doi.org/10.1101/2024.09.26.615248
+Zhenya Liu, Xu Wang, Shuo Cao, Tingyue Lei, Zhuyifu Chen, Mengyan Zhang, Zhongqi Liu, Jiacui Li, Jianzhong Lu, Wenqi Ma, Bingxiong Su, Yanling Peng, Yanshuai Xu, Xiaodong Xu, Wei Zhang, Cong Tan, Chengjie Chen, Yiwen Wang, Yongfeng Zhou, Machine learning empowers precise discovery of disease-resistance genes in plants, Plant Physiology, 2026;, kiag276, https://doi.org/10.1093/plphys/kiag276
 ## Acknowledgements
 This program would like to thank Professor Zhou and Professor Wang for their guidance, and express gratitude to Xu Wang, Tingyue Lei and Zhongqi Liu for their contributions.
