@@ -18,7 +18,7 @@ R-Predictor, designed for the de novo annotation of various R genes integrate fo
 ## Installation
 ### Manual installation
 Manually installing R-Predictor can be cumbersome, but fortunately, these tools it depends on are easy to work with.
-- [Pfam36.0](https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/Pfam36.0/) and [PfamA](https://drive.google.com/file/d/1BkmNB-4ujw8cIeTDWc-_GkXaUnU4Y3_j/view?usp=drive_link)
+- [Pfam36.0](https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/Pfam36.0/) and [PfamA](https://drive.google.com/file/d/17I80EbwOz-JWJAJ1n-8mdJC47jjCe8Yz/view?usp=drive_link)
 ~~~
 conda create -n pfam_scan
 conda activate pfam_scan
