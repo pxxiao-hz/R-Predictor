@@ -18,6 +18,7 @@ import pandas as pd
 import seaborn as sns
 import esm
 import scipy
+import sklearn
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.decomposition import PCA
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
@@ -44,6 +45,17 @@ def parse_args():
     parser.add_argument('--fasta', type=str, default='./data', help='path to the fasta file')
     parser.add_argument('--dir', type=str, default='./work', help='path to the work file')
     return parser.parse_args()
+
+def check_sklearn_version():
+    required_version = "1.2.2"
+    if sklearn.__version__ != required_version:
+        print(
+            f"[!] Error: esm_lrr.pickle requires scikit-learn {required_version}, "
+            f"but the current environment has scikit-learn {sklearn.__version__}."
+        )
+        print("[!] Recreate or fix the esm-lrr conda environment before running this module.")
+        print("[!] Recommended: conda create -n esm-lrr python=3.11 scikit-learn=1.2.2 -c conda-forge")
+        raise SystemExit(1)
 
 def ProteinToDict(path):
     #Return a dictionary with id as key and sequence as value
@@ -319,6 +331,7 @@ def writeprotein(protein,path):
             f.write(protein[k]+"\n")
 
 def main(args):
+    check_sklearn_version()
     plm_path = args.dir+"/models/esm1v_t33_650M_UR90S_1.pt"
     esm_lrr_path = args.dir+"/models/esm_lrr.pickle"
     new_dir = args.dir+"/tmp"
