@@ -193,7 +193,7 @@ def main(args):
     generate_protein_nopknb(protein,pknb,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb.fasta")
     
     #pk_tm
-    pk_tm_env = "perl /public/home/liuzhenya001/project/r-predictor/tool/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.txt"
+    pk_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.txt"
     subprocess.run(pk_tm_env,shell=True,check=True)
     pk_tm = tmhmm(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.txt")
     generate_protein(pk_protein,pk_tm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.fasta")

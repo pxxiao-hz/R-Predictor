@@ -185,7 +185,7 @@ def main(args):
         generate_protein_nopknb(protein_nb_lrr,tnl_rnl,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_notir_norpw8.fasta")
         protein_nb_lrr_notir_norpw8 = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_notir_norpw8.fasta")
         #here to run paircoil2
-        #cnl_path = "/public/home/liuzhenya001/project/r-predictor/tool/paircoil2/./paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.txt"
+        #cnl_path = "/home/pxxiao/tools/paircoil2/paircoil2/paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.txt"
         #subprocess.run(cnl_path,shell=True,check=True)
         #nb_lrr_notir_norpw8_cc = paircoil2(args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.txt")
         #generate_protein(protein_nb_lrr_notir_norpw8,nb_lrr_notir_norpw8_cc,args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.fasta")
@@ -225,7 +225,7 @@ def main(args):
         generate_protein_nopknb(protein_nb_nolrr, tn_rn, new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nb_nolrr_notir_norpw8.fasta")
         protein_nb_nolrr_notir_norpw8 = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nb_nolrr_notir_norpw8.fasta")
         #here to run paircoil2
-        #cn_path = "/public/home/liuzhenya001/project/r-predictor/tool/paircoil2/./paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.txt"
+        #cn_path = "/home/pxxiao/tools/paircoil2/paircoil2/paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.txt"
         #subprocess.run(cn_path,shell=True,check=True)
         #nb_nolrr_notir_norpw8_cc = paircoil2(args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.txt")
         #generate_protein(protein_nb_nolrr_notir_norpw8,nb_nolrr_notir_norpw8_cc,args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.fasta")

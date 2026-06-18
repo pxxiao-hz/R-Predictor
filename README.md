@@ -105,18 +105,19 @@ use R-Predictor directly on our HPC environment.
 ## R-Predictor usage
 **If you have correctly installed the required dependencies and modified the corresponding paths, R-Predictor will work smoothly.**  
 ~~~
-Make the following modifications before running R-Predictor.    
+Make the following checks before running R-Predictor.
 1.Unzip the model files of ESM-1v and ESM-LRR, and move them to `models` directory. 
 2.Unzip the PfamA database and move it to `hmm` directory. 
-3.Replace `/root/tool/tmhmm-2.0c/bin/tmhmm` in `Pfam_pk_nb.py` and `signal_rlk_rlp.py`with the correct path. 
-4.Replace `cnl_path` and `cn_path` in pfam_tir_rpw8.py with the correct paths.
+3.The local server TMHMM path used by the scripts is `/home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm`.
+4.The local server Paircoil2 path used by the scripts is `/home/pxxiao/tools/paircoil2/paircoil2/paircoil2`.
+5.The local server scripts directory is `/home/pxxiao/tools/R-Predictor/R-Predictor/scripts`.
 ~~~
 ~~~
 #Run R-Predictor for a single protein file.
-python pipeline.py --fasta <file>
+python scripts/pipeline.py --fasta <file>
 
 #Run R-Predictor for all proteins files in a folder.
-python pipeline.py --fasta <dir>
+python scripts/pipeline.py --fasta <dir>
 ~~~
 
 ## Input
