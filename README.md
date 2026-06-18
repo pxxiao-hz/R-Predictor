@@ -1,4 +1,7 @@
 # R-Predictor
+
+This fork is based on [zhouyflab/R-Predictor](https://github.com/zhouyflab/R-Predictor) and includes local runtime-path and entrypoint fixes for the `/home/pxxiao/tools/R-Predictor/R-Predictor` server deployment.
+
 ## Table of Contents
 - [Introduction](#Introduction)
 - [Installation](#Installation)
