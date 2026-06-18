@@ -7,13 +7,9 @@
 @Mail：zhenyaliu77@gmail.com
 
 """
-import subprocess
-import os
-
-
-import subprocess
-import os
 import argparse
+import os
+import subprocess
 
 def main():
 
@@ -54,11 +50,30 @@ def main():
         print(f"fasta file: {file_name}")
         print("="*50)
 
-        subprocess.run(f"conda run -n pfam_scan python pfam_pk_nb.py --fasta {protein_path} --dir {work_path}", shell=True)
-        subprocess.run(f"conda run -n signalp python signal_rlk_rlp.py --fasta {protein_path} --dir {work_path}", shell=True)
-        subprocess.run(f"conda run -n esm-lrr python esm-lrr.py --fasta {protein_path} --dir {work_path}", shell=True)
-        subprocess.run(f"conda run -n pfam_scan python pfam_lysm.py --fasta {protein_path} --dir {work_path}", shell=True)
-        subprocess.run(f"conda run -n pfam_scan python pfam_tir_rpw8.py --fasta {protein_path} --dir {work_path}", shell=True)
+        steps = [
+            ("pfam_scan", "pfam_pk_nb.py"),
+            ("signalp", "signal_rlk_rlp.py"),
+            ("esm-lrr", "esm-lrr.py"),
+            ("pfam_scan", "pfam_lysm.py"),
+            ("pfam_scan", "pfam_tir_rpw8.py"),
+        ]
+        for env_name, script_name in steps:
+            script_path = os.path.join(script_dir, script_name)
+            subprocess.run(
+                [
+                    "conda",
+                    "run",
+                    "-n",
+                    env_name,
+                    "python",
+                    script_path,
+                    "--fasta",
+                    protein_path,
+                    "--dir",
+                    work_path,
+                ],
+                check=True,
+            )
 
 
 if __name__ == "__main__":

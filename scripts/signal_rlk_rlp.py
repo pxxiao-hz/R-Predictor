@@ -130,7 +130,7 @@ def main(args):
     else:
         create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta")
 
-    rlp_s_tm_env = "perl /public/home/liuzhenya001/project/r-predictor/tool/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.txt"
+    rlp_s_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.txt"
     subprocess.run(rlp_s_tm_env,shell=True,check=True)
     rlp_s_tm = tmhmm(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.txt")
     protein_rlp_s = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta")
