@@ -11,6 +11,21 @@ import argparse
 import os
 import subprocess
 
+
+def check_required_files(work_path):
+    required_files = [
+        os.path.join(work_path, "models", "esm1v_t33_650M_UR90S_1.pt"),
+        os.path.join(work_path, "models", "esm_lrr.pickle"),
+    ]
+    missing_files = [path for path in required_files if not os.path.isfile(path)]
+    if missing_files:
+        print("[!] Error: required model files are missing:")
+        for path in missing_files:
+            print(f"    - {path}")
+        print("[!] Download the ESM-1v and ESM-LRR model files and place them in the models directory.")
+        raise SystemExit(1)
+
+
 def main():
 
     parser = argparse.ArgumentParser(description="R-Predictor Pipeline")
@@ -19,7 +34,7 @@ def main():
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     work_path = os.path.dirname(script_dir)
-    
+
     print(f"[*] work_path: {work_path}")
 
     input_path = os.path.abspath(args.fasta)
@@ -41,6 +56,8 @@ def main():
     if not protein_paths:
         print("[!] Error: no valid files were found at the specified path")
         return
+
+    check_required_files(work_path)
 
     print(f"[*] Preparing to process {len(protein_paths)} protein files")
 

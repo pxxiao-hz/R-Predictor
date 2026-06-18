@@ -114,6 +114,7 @@ Make the following checks before running R-Predictor.
 3.The local server TMHMM path used by the scripts is `/home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm`.
 4.The local server Paircoil2 path used by the scripts is `/home/pxxiao/tools/paircoil2/paircoil2/paircoil2`.
 5.The local server scripts directory is `/home/pxxiao/tools/R-Predictor/R-Predictor/scripts`.
+6.Before running, confirm that `models/esm1v_t33_650M_UR90S_1.pt` and `models/esm_lrr.pickle` exist.
 ~~~
 ~~~
 #Run R-Predictor for a single protein file.
