@@ -119,6 +119,9 @@ python scripts/pipeline.py --fasta <file>
 
 #Run R-Predictor for all proteins files in a folder.
 python scripts/pipeline.py --fasta <dir>
+
+#Use an ESM-LRR conda environment by absolute path.
+python scripts/pipeline.py --fasta <file> --esm-lrr-env /home/uu02/anaconda3/envs/esm-lrr
 ~~~
 
 ## Input

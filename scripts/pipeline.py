@@ -26,10 +26,21 @@ def check_required_files(work_path):
         raise SystemExit(1)
 
 
+def conda_env_args(env_ref):
+    if os.path.sep in env_ref or env_ref.startswith("."):
+        return ["-p", env_ref]
+    return ["-n", env_ref]
+
+
 def main():
 
     parser = argparse.ArgumentParser(description="R-Predictor Pipeline")
     parser.add_argument("--fasta", required=True, help="A single protein file or a directory containing multiple protein files")
+    parser.add_argument(
+        "--esm-lrr-env",
+        default="esm-lrr",
+        help="Conda environment name or absolute path for the ESM-LRR step",
+    )
     args = parser.parse_args()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -70,18 +81,17 @@ def main():
         steps = [
             ("pfam_scan", "pfam_pk_nb.py"),
             ("signalp", "signal_rlk_rlp.py"),
-            ("esm-lrr", "esm-lrr.py"),
+            (args.esm_lrr_env, "esm-lrr.py"),
             ("pfam_scan", "pfam_lysm.py"),
             ("pfam_scan", "pfam_tir_rpw8.py"),
         ]
-        for env_name, script_name in steps:
+        for env_ref, script_name in steps:
             script_path = os.path.join(script_dir, script_name)
             subprocess.run(
                 [
                     "conda",
                     "run",
-                    "-n",
-                    env_name,
+                    *conda_env_args(env_ref),
                     "python",
                     script_path,
                     "--fasta",
