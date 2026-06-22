@@ -13,7 +13,7 @@ This repository was reviewed for path-related runtime failures before running on
 - The README used `python pipeline.py`, but the entrypoint is `scripts/pipeline.py`.
 - `scripts/pipeline.py` called child scripts by bare relative filenames, so it only worked from the `scripts/` directory.
 - `scripts/pipeline.py` now checks required ESM model files before running the pipeline, so missing models fail fast.
-- `scripts/esm-lrr.py` now checks for `scikit-learn==1.2.2` before running ESM embedding, because newer scikit-learn versions cannot load `esm_lrr.pickle`.
+- `scripts/esm-lrr.py` now checks for `scikit-learn==1.2.2` before running ESM embedding, because newer scikit-learn versions cannot load `esm_lrr.pickle`. It also reports NumPy/scikit-learn binary incompatibility clearly.
 - `scripts/extract.py` now handles PyTorch >= 2.6 legacy ESM checkpoint loading by setting `weights_only=False` for trusted local model files.
 - `scripts/pfam_pk_nb.py` and `scripts/signal_rlk_rlp.py` used the author's absolute TMHMM path.
 - `scripts/Topaircoil2.py` used the author's absolute Paircoil2 path.
@@ -24,7 +24,7 @@ This repository was reviewed for path-related runtime failures before running on
 ## Remaining recommended cleanup
 
 - Place `models/esm1v_t33_650M_UR90S_1.pt` and `models/esm_lrr.pickle` under the repository `models/` directory before running.
-- Recreate the `esm-lrr` environment with `python=3.11` and `scikit-learn=1.2.2` if pickle loading fails.
+- Recreate or fix the `esm-lrr` environment with `python=3.11`, `numpy=1.24.4`, `scipy=1.10.1`, and `scikit-learn=1.2.2` if pickle loading or binary compatibility fails.
 - Keep ESM checkpoint files from trusted sources only, because legacy checkpoint loading uses pickle-compatible behavior.
 - Replace shell command string concatenation with `subprocess.run([...], check=True)` throughout the modules.
 - Replace repeated `args.fasta.split(".")[0].split("/")[-1]` path parsing with `pathlib.Path(args.fasta).stem`.

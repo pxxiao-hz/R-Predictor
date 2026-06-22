@@ -55,6 +55,8 @@ ESM-1v for README.md and model for esm1v_t33_650M_UR90S_1.pt.
 conda create -n esm-lrr python=3.11
 conda activate esm-lrr
 conda install -y \
+    numpy=1.24.4 \
+    scipy=1.10.1 \
     pytorch=2.7.1 \
     scikit-learn=1.2.2 \
     seaborn=0.13.2 \
@@ -86,6 +88,8 @@ signalp6==6.0+h
 tmhmm==2.0c
 pytorch==2.7.1
 fair-esm==1.0.2
+numpy==1.24.4
+scipy==1.10.1
 scikit-learn==1.2.2
 seaborn==0.13.2
 tqdm==4.67.3
@@ -112,7 +116,7 @@ Make the following checks before running R-Predictor.
 4.The local server Paircoil2 path used by the scripts is `/home/pxxiao/tools/paircoil2/paircoil2/paircoil2`.
 5.The local server scripts directory is `/home/pxxiao/tools/R-Predictor/R-Predictor/scripts`.
 6.Before running, confirm that `models/esm1v_t33_650M_UR90S_1.pt` and `models/esm_lrr.pickle` exist.
-7.The `esm-lrr` conda environment must use `scikit-learn=1.2.2`; newer versions such as 1.9.0 cannot load `esm_lrr.pickle`.
+7.The `esm-lrr` conda environment must use compatible NumPy/scikit-learn versions: `numpy=1.24.4`, `scipy=1.10.1`, and `scikit-learn=1.2.2`.
 ~~~
 ~~~
 #Run R-Predictor for a single protein file.

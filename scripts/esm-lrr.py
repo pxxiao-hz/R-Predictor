@@ -18,15 +18,6 @@ import pandas as pd
 import seaborn as sns
 import esm
 import scipy
-import sklearn
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.decomposition import PCA
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.svm import SVC, SVR
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import LogisticRegression, SGDRegressor
-from sklearn.pipeline import Pipeline
 import pickle
 import argparse
 import re
@@ -48,13 +39,24 @@ def parse_args():
 
 def check_sklearn_version():
     required_version = "1.2.2"
+    try:
+        import sklearn
+    except ValueError as exc:
+        if "numpy.dtype size changed" in str(exc):
+            print("[!] Error: scikit-learn and NumPy are binary-incompatible in the esm-lrr environment.")
+            print(f"[!] Details: {exc}")
+            print("[!] Recreate or fix the esm-lrr conda environment with compatible versions:")
+            print("[!] conda install -n esm-lrr -y numpy=1.24.4 scipy=1.10.1 scikit-learn=1.2.2 -c conda-forge")
+            raise SystemExit(1)
+        raise
+
     if sklearn.__version__ != required_version:
         print(
             f"[!] Error: esm_lrr.pickle requires scikit-learn {required_version}, "
             f"but the current environment has scikit-learn {sklearn.__version__}."
         )
         print("[!] Recreate or fix the esm-lrr conda environment before running this module.")
-        print("[!] Recommended: conda create -n esm-lrr python=3.11 scikit-learn=1.2.2 -c conda-forge")
+        print("[!] Recommended: conda install -n esm-lrr -y numpy=1.24.4 scipy=1.10.1 scikit-learn=1.2.2 -c conda-forge")
         raise SystemExit(1)
 
 def ProteinToDict(path):
