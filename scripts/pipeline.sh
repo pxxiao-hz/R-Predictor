@@ -23,7 +23,7 @@ work_path="$(cd "${script_dir}/.." && pwd)"
 fasta=""
 esm_lrr_python=""
 esm_lrr_env="esm-lrr"
-pfam_env="pfam_scan"
+pfam_env="/home/uu02/anaconda3/envs/pfam_scan"
 signalp_env="signalp"
 output_dir=""
 
