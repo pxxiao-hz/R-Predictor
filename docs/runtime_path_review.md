@@ -21,6 +21,7 @@ This repository was reviewed for path-related runtime failures before running on
 - `scripts/pipeline.py` supports `--esm-lrr-python` to call another environment's Python executable directly when `conda run -p` cannot write to that environment directory.
 - `scripts/pipeline.sh` provides a shell-controlled pipeline that uses `conda activate` instead of nested `conda run` calls.
 - `scripts/esm-lrr.py` now launches `extract.py` with `sys.executable`, so the embedding subprocess uses the same ESM-LRR Python environment.
+- `scripts/pipeline.sh` supports `--output-dir` to copy final `outcome/<prefix>_*.fasta` files to a requested directory after each input finishes.
 - `scripts/pfam_pk_nb.py` and `scripts/signal_rlk_rlp.py` used the author's absolute TMHMM path.
 - `scripts/Topaircoil2.py` used the author's absolute Paircoil2 path.
 - `scripts/Topaircoil2.py` referenced an undefined variable, `nb_nolrr_notir_norpw8_nocc`, when writing the non-coiled-coil N output.

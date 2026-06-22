@@ -128,6 +128,9 @@ python scripts/pipeline.py --fasta <file> --esm-lrr-python /home/uu02/anaconda3/
 
 #Shell-controlled pipeline. This avoids nested Python subprocess control and uses conda activate.
 bash scripts/pipeline.sh --fasta <file> --esm-lrr-python /home/uu02/anaconda3/envs/esm-lrr/bin/python
+
+#Copy final outcome files to a chosen directory after each input FASTA finishes.
+bash scripts/pipeline.sh --fasta <file> --output-dir /path/to/output --esm-lrr-python /home/uu02/anaconda3/envs/esm-lrr/bin/python
 ~~~
 
 ## Input

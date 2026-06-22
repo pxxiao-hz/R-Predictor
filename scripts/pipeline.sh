@@ -12,6 +12,7 @@ Options:
   --esm-lrr-env ENV         Conda environment name/path for ESM-LRR if --esm-lrr-python is not set.
   --pfam-env ENV            Conda environment name/path for Pfam/ProSite steps. Default: pfam_scan
   --signalp-env ENV         Conda environment name/path for SignalP step. Default: signalp
+  --output-dir PATH         Copy final outcome files for each input FASTA to this directory.
   -h, --help                Show this help.
 EOF
 }
@@ -24,6 +25,7 @@ esm_lrr_python=""
 esm_lrr_env="esm-lrr"
 pfam_env="pfam_scan"
 signalp_env="signalp"
+output_dir=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -45,6 +47,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --signalp-env)
             signalp_env="${2:-}"
+            shift 2
+            ;;
+        --output-dir)
+            output_dir="${2:-}"
             shift 2
             ;;
         -h|--help)
@@ -112,6 +118,36 @@ run_esm_lrr() {
     fi
 }
 
+fasta_prefix() {
+    local path="$1"
+    local name
+    name="$(basename "$path")"
+    printf '%s\n' "${name%%.*}"
+}
+
+copy_outcomes() {
+    local protein_path="$1"
+    local prefix
+    prefix="$(fasta_prefix "$protein_path")"
+
+    if [[ -z "$output_dir" ]]; then
+        return
+    fi
+
+    mkdir -p "$output_dir"
+    shopt -s nullglob
+    local files=("${work_path}/outcome/${prefix}"_*.fasta)
+    shopt -u nullglob
+
+    if [[ "${#files[@]}" -eq 0 ]]; then
+        echo "[!] Warning: no outcome files matched ${work_path}/outcome/${prefix}_*.fasta" >&2
+        return
+    fi
+
+    cp "${files[@]}" "$output_dir"/
+    echo "[*] Copied ${#files[@]} outcome files to ${output_dir}"
+}
+
 collect_fastas() {
     local input_path="$1"
     if [[ -d "$input_path" ]]; then
@@ -144,4 +180,5 @@ for protein_path in "${protein_paths[@]}"; do
     run_esm_lrr "$protein_path"
     run_in_conda "$pfam_env" python "${script_dir}/pfam_lysm.py" --fasta "$protein_path" --dir "$work_path"
     run_in_conda "$pfam_env" python "${script_dir}/pfam_tir_rpw8.py" --fasta "$protein_path" --dir "$work_path"
+    copy_outcomes "$protein_path"
 done
