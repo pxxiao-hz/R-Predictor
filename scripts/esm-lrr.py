@@ -14,6 +14,7 @@ import argparse
 import re
 import subprocess
 import os
+import sys
 
 def is_file_empty(file_path):
     return os.stat(file_path).st_size == 0
@@ -329,13 +330,23 @@ def main(args):
     esm_lrr_path = args.dir+"/models/esm_lrr.pickle"
     new_dir = args.dir+"/tmp"
     extract_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "extract.py")
+    extract_python = sys.executable
 
     #nb
     if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb.fasta") != True:
         protein_nb = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb.fasta")
         generatesegment(protein_nb,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment.fasta")
-        nb_lrr_extract_env = f"python {extract_script} {plm_path} "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment.fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment_emb --repr_layers 33 --include mean"
-        subprocess.run(nb_lrr_extract_env, shell=True, check=True)
+        subprocess.run([
+            extract_python,
+            extract_script,
+            plm_path,
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment.fasta",
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment_emb",
+            "--repr_layers",
+            "33",
+            "--include",
+            "mean",
+        ], check=True)
         predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment.fasta",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_segment_emb",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_score.txt",esm_lrr_path)
         nb_lrr_info = read_predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_score.txt",1.2)
         nb_lrr_target = only_peak(nb_lrr_info)
@@ -353,8 +364,17 @@ def main(args):
     if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s.fasta") != True:
         protein_rlk_s = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s.fasta")
         generatesegment(protein_rlk_s,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment.fasta")
-        rlk_s_lrr_extract_env = f"python {extract_script} {plm_path} "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment.fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment_emb --repr_layers 33 --include mean"
-        subprocess.run(rlk_s_lrr_extract_env, shell=True, check=True)
+        subprocess.run([
+            extract_python,
+            extract_script,
+            plm_path,
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment.fasta",
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment_emb",
+            "--repr_layers",
+            "33",
+            "--include",
+            "mean",
+        ], check=True)
         predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment.fasta",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_segment_emb",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_lrr_score.txt",esm_lrr_path)
         rlk_s_lrr_info = read_predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_lrr_score.txt",1.2)
         rlk_s_lrr_target = only_peak(rlk_s_lrr_info)
@@ -373,8 +393,17 @@ def main(args):
     if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.fasta") != True:
         protein_rlp_s_tm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.fasta")
         generatesegment(protein_rlp_s_tm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment.fasta")
-        rlp_s_tm_lrr_extract_env = f"python {extract_script} {plm_path} "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment.fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment_emb --repr_layers 33 --include mean"
-        subprocess.run(rlp_s_tm_lrr_extract_env, shell=True, check=True)
+        subprocess.run([
+            extract_python,
+            extract_script,
+            plm_path,
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment.fasta",
+            new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment_emb",
+            "--repr_layers",
+            "33",
+            "--include",
+            "mean",
+        ], check=True)
         predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment.fasta",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_segment_emb",new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_lrr_score.txt",esm_lrr_path)
         rlp_s_tm_lrr_info = read_predict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_lrr_score.txt",1.2)
         rlp_s_tm_lrr_target = only_peak(rlp_s_tm_lrr_info)
