@@ -95,14 +95,10 @@ seaborn==0.13.2
 tqdm==4.67.3
 pftools==3.2.12
 
-For PyTorch >= 2.6, `scripts/extract.py` sets `weights_only=False` when loading trusted legacy ESM checkpoints.
-
-Note on Compatibility: Although the installation procedures above have been thoroughly tested, please
-note that the 64-bit package of Paircoil2 appears to be missing the required .paircoil2 file, which
-may prevent it from running successfully on 64-bit operating systems. If you encounter any difficulties
-during the installation of R-Predictor, please feel free to open a GitHub issue or contact us via email
-at zhenyaliu77@gmail.com. We are happy to provide technical support or, if necessary, grant access to
-use R-Predictor directly on our HPC environment.
+Compatibility notes for this fork:
+1. For PyTorch >= 2.6, `scripts/extract.py` already sets `weights_only=False` when loading trusted legacy ESM checkpoints.
+2. The `esm-lrr` environment should use `python=3.11`, `numpy=1.24.4`, `scipy=1.10.1`, and `scikit-learn=1.2.2`.
+3. Paircoil2 may require a valid `.paircoil2` configuration file in the run directory or home directory.
 ~~~
 **If the above tools cannot be installed via conda or downloaded from the official website, please go to the [tools](tools/) folder.**
 
