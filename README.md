@@ -91,10 +91,7 @@ seaborn==0.13.2
 tqdm==4.67.3
 pftools==3.2.12
 
-if pythorch >= 2.6, please change:
-model_data = torch.load(str(model_location), map_location="cpu") to  model_data = torch.load(str(model_location), map_location="cpu", weights_only=False)
-regression_data = torch.load(regression_location, map_location="cpu") to regression_data = torch.load(regression_location, map_location="cpu", weights_only=False)
-in ./anaconda3/envs/esm-lrr/lib/python3.11/site-packages/esm/pretrained.py
+For PyTorch >= 2.6, `scripts/extract.py` sets `weights_only=False` when loading trusted legacy ESM checkpoints.
 
 Note on Compatibility: Although the installation procedures above have been thoroughly tested, please
 note that the 64-bit package of Paircoil2 appears to be missing the required .paircoil2 file, which

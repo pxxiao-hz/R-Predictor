@@ -5,11 +5,26 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
+import inspect
 import pathlib
 
 import torch
 
 from esm import Alphabet, FastaBatchedDataset, ProteinBertModel, pretrained, MSATransformer
+
+
+def patch_torch_load_for_esm_checkpoint():
+    """Load trusted legacy ESM checkpoints with PyTorch >= 2.6 defaults."""
+    if "weights_only" not in inspect.signature(torch.load).parameters:
+        return
+
+    original_torch_load = torch.load
+
+    def torch_load_with_legacy_default(*args, **kwargs):
+        kwargs.setdefault("weights_only", False)
+        return original_torch_load(*args, **kwargs)
+
+    torch.load = torch_load_with_legacy_default
 
 
 def create_parser():
@@ -61,6 +76,7 @@ def create_parser():
 
 
 def run(args):
+    patch_torch_load_for_esm_checkpoint()
     model, alphabet = pretrained.load_model_and_alphabet(args.model_location)
     model.eval()
     if isinstance(model, MSATransformer):
