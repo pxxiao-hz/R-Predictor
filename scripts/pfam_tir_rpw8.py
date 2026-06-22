@@ -11,6 +11,7 @@ import subprocess
 import argparse
 import os
 import re
+import shutil
 
 
 def parse_args():
@@ -25,6 +26,16 @@ def is_file_empty(file_path):
 def create_file_empty(file_path):
     with open(file_path,"w") as f:
         pass
+
+def check_required_tools():
+    missing_tools = [tool for tool in ("pfam_scan.pl", "ps_scan.pl") if shutil.which(tool) is None]
+    if missing_tools:
+        print("[!] Error: required commands are missing from the current environment:")
+        for tool in missing_tools:
+            print(f"    - {tool}")
+        print("[!] Install ProSite pftools into the pfam_scan environment, for example:")
+        print("[!] conda install -n pfam_scan -c bioconda pftools -y")
+        raise SystemExit(1)
 
 def process_pfam(path,first):
     if first == True:
@@ -163,6 +174,7 @@ def writeprotein(protein,path):
 
 
 def main(args):
+    check_required_tools()
     new_dir = args.dir+"/tmp"
     #tnl rnl nl cnl
     if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr.fasta") != True:

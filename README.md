@@ -70,7 +70,8 @@ ESM-LRR for README.md and model for esm_lrr.pickle.
 - [ProSite](https://ftp.expasy.org/databases/prosite/ps_scan/README)
 ~~~
 conda activate pfam_scan
-conda install -c bioconda pftools
+conda install -n pfam_scan -c bioconda pftools -y
+conda run -n pfam_scan which ps_scan.pl
 ~~~
 - [Paircoil2](https://cb.csail.mit.edu/paircoil2/)
 ~~~
