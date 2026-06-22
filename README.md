@@ -59,7 +59,6 @@ conda install -y \
     scipy=1.10.1 \
     pytorch=2.7.1 \
     scikit-learn=1.2.2 \
-    seaborn=0.13.2 \
     -c pytorch \
     -c conda-forge
 conda install -y fair-esm--1.0.2
@@ -91,7 +90,6 @@ fair-esm==1.0.2
 numpy==1.24.4
 scipy==1.10.1
 scikit-learn==1.2.2
-seaborn==0.13.2
 tqdm==4.67.3
 pftools==3.2.12
 

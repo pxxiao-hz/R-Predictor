@@ -15,6 +15,7 @@ This repository was reviewed for path-related runtime failures before running on
 - `scripts/pipeline.py` now checks required ESM model files before running the pipeline, so missing models fail fast.
 - `scripts/esm-lrr.py` now checks for `scikit-learn==1.2.2` before running ESM embedding, because newer scikit-learn versions cannot load `esm_lrr.pickle`. It also reports NumPy/scikit-learn binary incompatibility clearly.
 - `scripts/extract.py` now handles PyTorch >= 2.6 legacy ESM checkpoint loading by setting `weights_only=False` for trusted local model files.
+- `scripts/esm-lrr.py` no longer imports unused plotting/data-analysis libraries, avoiding matplotlib/NumPy version conflicts in the prediction environment.
 - `scripts/pfam_pk_nb.py` and `scripts/signal_rlk_rlp.py` used the author's absolute TMHMM path.
 - `scripts/Topaircoil2.py` used the author's absolute Paircoil2 path.
 - `scripts/Topaircoil2.py` referenced an undefined variable, `nb_nolrr_notir_norpw8_nocc`, when writing the non-coiled-coil N output.
