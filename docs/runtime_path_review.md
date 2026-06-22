@@ -18,6 +18,7 @@ This repository was reviewed for path-related runtime failures before running on
 - `scripts/esm-lrr.py` no longer imports unused plotting/data-analysis libraries, avoiding matplotlib/NumPy version conflicts in the prediction environment.
 - `scripts/pfam_tir_rpw8.py` now checks that `pfam_scan.pl` and `ps_scan.pl` are available before running TIR/RPW8 prediction.
 - `scripts/pipeline.py` supports `--esm-lrr-env` as either a conda environment name or an absolute environment path.
+- `scripts/pipeline.py` supports `--esm-lrr-python` to call another environment's Python executable directly when `conda run -p` cannot write to that environment directory.
 - `scripts/pfam_pk_nb.py` and `scripts/signal_rlk_rlp.py` used the author's absolute TMHMM path.
 - `scripts/Topaircoil2.py` used the author's absolute Paircoil2 path.
 - `scripts/Topaircoil2.py` referenced an undefined variable, `nb_nolrr_notir_norpw8_nocc`, when writing the non-coiled-coil N output.

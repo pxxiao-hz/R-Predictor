@@ -32,6 +32,16 @@ def conda_env_args(env_ref):
     return ["-n", env_ref]
 
 
+def build_step_command(env_ref, script_path, protein_path, work_path, python_path=None):
+    if python_path:
+        command = [python_path, script_path]
+    else:
+        command = ["conda", "run", *conda_env_args(env_ref), "python", script_path]
+
+    command.extend(["--fasta", protein_path, "--dir", work_path])
+    return command
+
+
 def main():
 
     parser = argparse.ArgumentParser(description="R-Predictor Pipeline")
@@ -40,6 +50,10 @@ def main():
         "--esm-lrr-env",
         default="esm-lrr",
         help="Conda environment name or absolute path for the ESM-LRR step",
+    )
+    parser.add_argument(
+        "--esm-lrr-python",
+        help="Python executable for the ESM-LRR step; overrides --esm-lrr-env",
     )
     args = parser.parse_args()
 
@@ -79,28 +93,15 @@ def main():
         print("="*50)
 
         steps = [
-            ("pfam_scan", "pfam_pk_nb.py"),
-            ("signalp", "signal_rlk_rlp.py"),
-            (args.esm_lrr_env, "esm-lrr.py"),
-            ("pfam_scan", "pfam_lysm.py"),
-            ("pfam_scan", "pfam_tir_rpw8.py"),
+            ("pfam_scan", "pfam_pk_nb.py", None),
+            ("signalp", "signal_rlk_rlp.py", None),
+            (args.esm_lrr_env, "esm-lrr.py", args.esm_lrr_python),
+            ("pfam_scan", "pfam_lysm.py", None),
+            ("pfam_scan", "pfam_tir_rpw8.py", None),
         ]
-        for env_ref, script_name in steps:
+        for env_ref, script_name, python_path in steps:
             script_path = os.path.join(script_dir, script_name)
-            subprocess.run(
-                [
-                    "conda",
-                    "run",
-                    *conda_env_args(env_ref),
-                    "python",
-                    script_path,
-                    "--fasta",
-                    protein_path,
-                    "--dir",
-                    work_path,
-                ],
-                check=True,
-            )
+            subprocess.run(build_step_command(env_ref, script_path, protein_path, work_path, python_path), check=True)
 
 
 if __name__ == "__main__":

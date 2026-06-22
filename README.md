@@ -122,6 +122,9 @@ python scripts/pipeline.py --fasta <dir>
 
 #Use an ESM-LRR conda environment by absolute path.
 python scripts/pipeline.py --fasta <file> --esm-lrr-env /home/uu02/anaconda3/envs/esm-lrr
+
+#Use a Python executable directly for ESM-LRR, useful when conda run cannot write to another user's environment.
+python scripts/pipeline.py --fasta <file> --esm-lrr-python /home/uu02/anaconda3/envs/esm-lrr/bin/python
 ~~~
 
 ## Input
