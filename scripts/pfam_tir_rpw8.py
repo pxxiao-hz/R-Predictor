@@ -18,6 +18,12 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Predicting TIR and RPW8 module of Rpredictor')
     parser.add_argument('--fasta', type=str, default='./data', help='path to the fasta file')
     parser.add_argument('--dir', type=str, default='./work', help='path to the work file')
+    parser.add_argument(
+        '--paircoil2',
+        type=str,
+        default='/home/pxxiao/tools/paircoil2/paircoil2/paircoil2',
+        help='path to the Paircoil2 executable',
+    )
     return parser.parse_args()
 
 def is_file_empty(file_path):
@@ -27,7 +33,7 @@ def create_file_empty(file_path):
     with open(file_path,"w") as f:
         pass
 
-def check_required_tools():
+def check_required_tools(paircoil2_executable):
     missing_tools = [tool for tool in ("pfam_scan.pl", "ps_scan.pl") if shutil.which(tool) is None]
     if missing_tools:
         print("[!] Error: required commands are missing from the current environment:")
@@ -35,6 +41,9 @@ def check_required_tools():
             print(f"    - {tool}")
         print("[!] Install ProSite pftools into the pfam_scan environment, for example:")
         print("[!] conda install -n pfam_scan -c bioconda pftools -y")
+        raise SystemExit(1)
+    if not os.path.isfile(paircoil2_executable) or not os.access(paircoil2_executable, os.X_OK):
+        print(f"[!] Error: Paircoil2 executable is missing or not executable: {paircoil2_executable}")
         raise SystemExit(1)
 
 def process_pfam(path,first):
@@ -120,6 +129,33 @@ def paircoil2(path):
     target = {key: value for key, value in target.items() if target[key] != []}
     return target
 
+def run_paircoil2(executable, input_path, output_path):
+    input_path = os.path.abspath(input_path)
+    output_path = os.path.abspath(output_path)
+
+    if is_file_empty(input_path):
+        create_file_empty(output_path)
+        return {}
+
+    executable = os.path.abspath(executable)
+    install_dir = os.path.dirname(executable)
+    try:
+        subprocess.run(
+            [executable, "-win", "21", input_path, output_path],
+            cwd=install_dir,
+            check=True,
+        )
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError(
+            "Paircoil2 failed. Verify that its .paircoil2 configuration file and "
+            f"table files are available in {install_dir}. Command: "
+            f"{' '.join(error.cmd)}"
+        ) from error
+
+    if not os.path.isfile(output_path):
+        raise RuntimeError(f"Paircoil2 did not create the expected output file: {output_path}")
+    return paircoil2(output_path)
+
 def ProteinToDict(path):
     #Return a dictionary with id as key and sequence as value
     protein_seq = ''
@@ -174,8 +210,11 @@ def writeprotein(protein,path):
 
 
 def main(args):
-    check_required_tools()
-    new_dir = args.dir+"/tmp"
+    check_required_tools(args.paircoil2)
+    work_dir = os.path.abspath(args.dir)
+    new_dir = os.path.join(work_dir, "tmp")
+    outcome_dir = os.path.join(work_dir, "outcome")
+    prefix = os.path.basename(args.fasta).split(".")[0]
     #tnl rnl nl cnl
     if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr.fasta") != True:
         nb_lrr_tir_rpw8_path = "pfam_scan.pl -fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr.fasta"+" -dir "+args.dir+"/hmm/Tir_Rpw8_HMM -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_tir_rpw8.txt"
@@ -196,16 +235,18 @@ def main(args):
         tnl_rnl = {**protein_nb_lrr_tir,**protein_nb_lrr_rpw8}
         generate_protein_nopknb(protein_nb_lrr,tnl_rnl,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_notir_norpw8.fasta")
         protein_nb_lrr_notir_norpw8 = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_notir_norpw8.fasta")
-        #here to run paircoil2
-        #cnl_path = "/home/pxxiao/tools/paircoil2/paircoil2/paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.txt"
-        #subprocess.run(cnl_path,shell=True,check=True)
-        #nb_lrr_notir_norpw8_cc = paircoil2(args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.txt")
-        #generate_protein(protein_nb_lrr_notir_norpw8,nb_lrr_notir_norpw8_cc,args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.fasta")
-        #protein_nb_lrr_notir_norpw8_cc = ProteinToDict(args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_cc.fasta")
-        #writeprotein(protein_nb_lrr_notir_norpw8_cc,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_cnl.fasta")
-        #generate_protein_nopknb(protein_nb_lrr_notir_norpw8,nb_lrr_notir_norpw8_cc,args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_nocc.fasta")
-        #protein_nb_lrr_notir_norpw8_nocc = ProteinToDict(args.fasta.split(".")[0]+"_nb_lrr_notir_norpw8_nocc.fasta")
-        #writeprotein(protein_nb_lrr_notir_norpw8_nocc,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_nl.fasta")
+        # here to run paircoil2
+        cnl_input = os.path.join(new_dir, prefix + "_nb_lrr_notir_norpw8.fasta")
+        cnl_output = os.path.join(new_dir, prefix + "_nb_lrr_notir_norpw8_cc.txt")
+        nb_lrr_notir_norpw8_cc = run_paircoil2(args.paircoil2, cnl_input, cnl_output)
+        cnl_fasta = os.path.join(new_dir, prefix + "_nb_lrr_notir_norpw8_cc.fasta")
+        generate_protein(protein_nb_lrr_notir_norpw8, nb_lrr_notir_norpw8_cc, cnl_fasta)
+        protein_nb_lrr_notir_norpw8_cc = ProteinToDict(cnl_fasta)
+        writeprotein(protein_nb_lrr_notir_norpw8_cc, os.path.join(outcome_dir, prefix + "_cnl.fasta"))
+        nl_fasta = os.path.join(new_dir, prefix + "_nb_lrr_notir_norpw8_nocc.fasta")
+        generate_protein_nopknb(protein_nb_lrr_notir_norpw8, nb_lrr_notir_norpw8_cc, nl_fasta)
+        protein_nb_lrr_notir_norpw8_nocc = ProteinToDict(nl_fasta)
+        writeprotein(protein_nb_lrr_notir_norpw8_nocc, os.path.join(outcome_dir, prefix + "_nl.fasta"))
     else:
         create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_lrr_tir.fasta")
         create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_tnl.fasta")
@@ -236,16 +277,18 @@ def main(args):
         tn_rn = {**protein_nb_nolrr_tir, **protein_nb_nolrr_rpw8}
         generate_protein_nopknb(protein_nb_nolrr, tn_rn, new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nb_nolrr_notir_norpw8.fasta")
         protein_nb_nolrr_notir_norpw8 = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nb_nolrr_notir_norpw8.fasta")
-        #here to run paircoil2
-        #cn_path = "/home/pxxiao/tools/paircoil2/paircoil2/paircoil2 -win 21 "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8.fasta"+" "+args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.txt"
-        #subprocess.run(cn_path,shell=True,check=True)
-        #nb_nolrr_notir_norpw8_cc = paircoil2(args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.txt")
-        #generate_protein(protein_nb_nolrr_notir_norpw8,nb_nolrr_notir_norpw8_cc,args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.fasta")
-        #protein_nb_nolrr_notir_norpw8_cc = ProteinToDict(args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_cc.fasta")
-        #writeprotein(protein_nb_nolrr_notir_norpw8_cc,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_cn.fasta")
-        #generate_protein_nopknb(protein_nb_nolrr_notir_norpw8,nb_nolrr_notir_norpw8_nocc,args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_nocc.fasta")
-        #protein_nb_nolrr_notir_norpw8_nocc = ProteinToDict(args.fasta.split(".")[0]+"_nb_nolrr_notir_norpw8_nocc.fasta")
-        #writeprotein(protein_nb_nolrr_notir_norpw8_nocc,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_n.fasta")
+        # here to run paircoil2
+        cn_input = os.path.join(new_dir, prefix + "_nb_nolrr_notir_norpw8.fasta")
+        cn_output = os.path.join(new_dir, prefix + "_nb_nolrr_notir_norpw8_cc.txt")
+        nb_nolrr_notir_norpw8_cc = run_paircoil2(args.paircoil2, cn_input, cn_output)
+        cn_fasta = os.path.join(new_dir, prefix + "_nb_nolrr_notir_norpw8_cc.fasta")
+        generate_protein(protein_nb_nolrr_notir_norpw8, nb_nolrr_notir_norpw8_cc, cn_fasta)
+        protein_nb_nolrr_notir_norpw8_cc = ProteinToDict(cn_fasta)
+        writeprotein(protein_nb_nolrr_notir_norpw8_cc, os.path.join(outcome_dir, prefix + "_cn.fasta"))
+        n_fasta = os.path.join(new_dir, prefix + "_nb_nolrr_notir_norpw8_nocc.fasta")
+        generate_protein_nopknb(protein_nb_nolrr_notir_norpw8, nb_nolrr_notir_norpw8_cc, n_fasta)
+        protein_nb_nolrr_notir_norpw8_nocc = ProteinToDict(n_fasta)
+        writeprotein(protein_nb_nolrr_notir_norpw8_nocc, os.path.join(outcome_dir, prefix + "_n.fasta"))
     else:
         create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb_nolrr_tir.fasta")
         create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_tn.fasta")

@@ -10,8 +10,9 @@ Options:
   --fasta PATH              A FASTA file or a directory containing .fa/.fasta files.
   --esm-lrr-python PATH     Python executable for the ESM-LRR step.
   --esm-lrr-env ENV         Conda environment name/path for ESM-LRR if --esm-lrr-python is not set.
-  --pfam-env ENV            Conda environment name/path for Pfam/ProSite steps. Default: pfam_scan
+  --pfam-env ENV            Conda environment name/path for Pfam/ProSite steps.
   --signalp-env ENV         Conda environment name/path for SignalP step. Default: signalp
+  --paircoil2 PATH          Paircoil2 executable path.
   --output-dir PATH         Copy final outcome files for each input FASTA to this directory.
   -h, --help                Show this help.
 EOF
@@ -25,6 +26,7 @@ esm_lrr_python=""
 esm_lrr_env="esm-lrr"
 pfam_env="/home/uu02/anaconda3/envs/pfam_scan"
 signalp_env="signalp"
+paircoil2="/home/pxxiao/tools/paircoil2/paircoil2/paircoil2"
 output_dir=""
 
 while [[ $# -gt 0 ]]; do
@@ -47,6 +49,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --signalp-env)
             signalp_env="${2:-}"
+            shift 2
+            ;;
+        --paircoil2)
+            paircoil2="${2:-}"
             shift 2
             ;;
         --output-dir)
@@ -179,6 +185,9 @@ for protein_path in "${protein_paths[@]}"; do
     run_in_conda "$signalp_env" python "${script_dir}/signal_rlk_rlp.py" --fasta "$protein_path" --dir "$work_path"
     run_esm_lrr "$protein_path"
     run_in_conda "$pfam_env" python "${script_dir}/pfam_lysm.py" --fasta "$protein_path" --dir "$work_path"
-    run_in_conda "$pfam_env" python "${script_dir}/pfam_tir_rpw8.py" --fasta "$protein_path" --dir "$work_path"
+    run_in_conda "$pfam_env" python "${script_dir}/pfam_tir_rpw8.py" \
+        --fasta "$protein_path" \
+        --dir "$work_path" \
+        --paircoil2 "$paircoil2"
     copy_outcomes "$protein_path"
 done
