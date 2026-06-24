@@ -169,7 +169,7 @@ clean_sample_workspace() {
 collect_fastas() {
     local input_path="$1"
     if [[ -d "$input_path" ]]; then
-        find "$input_path" -maxdepth 1 -type f \( -iname "*.fa" -o -iname "*.fasta" \) | sort
+        find -L "$input_path" -maxdepth 1 -type f \( -iname "*.fa" -o -iname "*.fasta" \) | sort
     elif [[ -f "$input_path" ]]; then
         printf '%s\n' "$input_path"
     else
