@@ -13,7 +13,7 @@ Options:
   --pfam-env ENV            Conda environment name/path for Pfam/ProSite steps.
   --signalp-env ENV         Conda environment name/path for SignalP step. Default: signalp
   --paircoil2 PATH          Paircoil2 executable path.
-  --output-dir PATH         Copy final outcome files for each input FASTA to this directory.
+  --output-dir PATH         Copy outcomes into a separate subdirectory for each sample.
   -h, --help                Show this help.
 EOF
 }
@@ -134,13 +134,14 @@ fasta_prefix() {
 copy_outcomes() {
     local protein_path="$1"
     local prefix
+    local sample_output_dir
     prefix="$(fasta_prefix "$protein_path")"
 
     if [[ -z "$output_dir" ]]; then
         return
     fi
 
-    mkdir -p "$output_dir"
+    sample_output_dir="${output_dir}/${prefix}"
     shopt -s nullglob
     local files=("${work_path}/outcome/${prefix}"_*.fasta)
     shopt -u nullglob
@@ -150,8 +151,10 @@ copy_outcomes() {
         return
     fi
 
-    cp "${files[@]}" "$output_dir"/
-    echo "[*] Copied ${#files[@]} outcome files to ${output_dir}"
+    rm -rf "$sample_output_dir"
+    mkdir -p "$sample_output_dir"
+    cp "${files[@]}" "$sample_output_dir"/
+    echo "[*] Copied ${#files[@]} outcome files to ${sample_output_dir}"
 }
 
 clean_sample_workspace() {
@@ -195,6 +198,10 @@ fi
 declare -A seen_prefixes=()
 for protein_path in "${protein_paths[@]}"; do
     prefix="$(fasta_prefix "$protein_path")"
+    if [[ -z "$prefix" || "$prefix" == "." || "$prefix" == ".." ]]; then
+        echo "[!] Error: cannot derive a safe sample name from ${protein_path}" >&2
+        exit 1
+    fi
     if [[ -n "${seen_prefixes[$prefix]:-}" ]]; then
         echo "[!] Error: input files produce the same sample prefix '${prefix}':" >&2
         echo "    - ${seen_prefixes[$prefix]}" >&2
