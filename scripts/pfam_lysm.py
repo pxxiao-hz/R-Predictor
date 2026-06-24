@@ -130,52 +130,53 @@ def writeprotein(protein,path):
 
 def main(args):
     new_dir = args.dir+"/tmp"
+    prefix = os.path.splitext(os.path.basename(args.fasta))[0]
     #lysm-rlk and s+tm+pk
-    if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr.fasta") != True:
-        rlk_lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_lysm.txt"
+    if is_file_empty(new_dir+"/"+prefix+"_pk_tm_s_nolrr.fasta") != True:
+        rlk_lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+prefix+"_pk_tm_s_nolrr.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+prefix+"_pk_tm_s_nolrr_lysm.txt"
         subprocess.run(rlk_lysm_path,shell=True,check=True)
-        protein_rlk_s_nolrr = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr.fasta")
-        rlk_lysm = process_pfam(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_lysm.txt",False)
-        generate_protein(protein_rlk_s_nolrr,rlk_lysm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_lysm.fasta")
-        protein_pk_tm_s_nolrr_lysm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_lysm.fasta")
-        writeprotein(protein_pk_tm_s_nolrr_lysm,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_lysm_rlk.fasta")
-        pk_tm_s_nolrr_path = "pfam_scan.pl -fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr.fasta"+" -dir "+args.dir+"/hmm/PfamA -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_other.txt"
+        protein_rlk_s_nolrr = ProteinToDict(new_dir+"/"+prefix+"_pk_tm_s_nolrr.fasta")
+        rlk_lysm = process_pfam(new_dir+"/"+prefix+"_pk_tm_s_nolrr_lysm.txt",False)
+        generate_protein(protein_rlk_s_nolrr,rlk_lysm,new_dir+"/"+prefix+"_pk_tm_s_nolrr_lysm.fasta")
+        protein_pk_tm_s_nolrr_lysm = ProteinToDict(new_dir+"/"+prefix+"_pk_tm_s_nolrr_lysm.fasta")
+        writeprotein(protein_pk_tm_s_nolrr_lysm,args.dir+"/outcome/"+prefix+"_lysm_rlk.fasta")
+        pk_tm_s_nolrr_path = "pfam_scan.pl -fasta "+new_dir+"/"+prefix+"_pk_tm_s_nolrr.fasta"+" -dir "+args.dir+"/hmm/PfamA -outfile "+new_dir+"/"+prefix+"_pk_tm_s_nolrr_other.txt"
         subprocess.run(pk_tm_s_nolrr_path,shell=True,check=True)
-        pk_tm_s_only = pfam_other(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_other.txt")
-        generate_protein(protein_rlk_s_nolrr,pk_tm_s_only,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_only.fasta")
-        protein_pk_tm_s_only = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_only.fasta")
-        writeprotein(protein_pk_tm_s_only,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_s_tm_pk.fasta")
+        pk_tm_s_only = pfam_other(new_dir+"/"+prefix+"_pk_tm_s_nolrr_other.txt")
+        generate_protein(protein_rlk_s_nolrr,pk_tm_s_only,new_dir+"/"+prefix+"_pk_tm_s_only.fasta")
+        protein_pk_tm_s_only = ProteinToDict(new_dir+"/"+prefix+"_pk_tm_s_only.fasta")
+        writeprotein(protein_pk_tm_s_only,args.dir+"/outcome/"+prefix+"_s_tm_pk.fasta")
     else:
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_nolrr_lysm.fasta")
-        create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_lysm_rlk.fasta")
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s_only.fasta")
-        create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_s_tm_pk.fasta")
+        create_file_empty(new_dir+"/"+prefix+"_pk_tm_s_nolrr_lysm.fasta")
+        create_file_empty(args.dir+"/outcome/"+prefix+"_lysm_rlk.fasta")
+        create_file_empty(new_dir+"/"+prefix+"_pk_tm_s_only.fasta")
+        create_file_empty(args.dir+"/outcome/"+prefix+"_s_tm_pk.fasta")
 
     #lysm-rlp
-    if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_nolrr.fasta") != True:
-        rlp_lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_nolrr.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm_nolrr_lysm.txt"
+    if is_file_empty(new_dir+"/"+prefix+"_nopknb_s_tm_nolrr.fasta") != True:
+        rlp_lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+prefix+"_nopknb_s_tm_nolrr.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+prefix+"_nopknb_s_tm_nolrr_lysm.txt"
         subprocess.run(rlp_lysm_path, shell=True, check=True)
-        protein_rlp_s_tm_nolrr = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_tm_nolrr.fasta")
-        rlp_lysm = process_pfam(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_tm_nolrr_lysm.txt", False)
-        generate_protein(protein_rlp_s_tm_nolrr, rlp_lysm, new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_tm_nolrr_lysm.fasta")
-        protein_nopknb_s_tm_nolrr_lysm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_tm_nolrr_lysm.fasta")
-        writeprotein(protein_nopknb_s_tm_nolrr_lysm,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_lysm_rlp.fasta")
+        protein_rlp_s_tm_nolrr = ProteinToDict(new_dir+"/"+prefix + "_nopknb_s_tm_nolrr.fasta")
+        rlp_lysm = process_pfam(new_dir+"/"+prefix + "_nopknb_s_tm_nolrr_lysm.txt", False)
+        generate_protein(protein_rlp_s_tm_nolrr, rlp_lysm, new_dir+"/"+prefix + "_nopknb_s_tm_nolrr_lysm.fasta")
+        protein_nopknb_s_tm_nolrr_lysm = ProteinToDict(new_dir+"/"+prefix + "_nopknb_s_tm_nolrr_lysm.fasta")
+        writeprotein(protein_nopknb_s_tm_nolrr_lysm,args.dir+"/outcome/"+prefix+"_lysm_rlp.fasta")
     else:
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_tm_nolrr_lysm.fasta")
-        create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_lysm_rlp.fasta")
+        create_file_empty(new_dir+"/"+prefix + "_nopknb_s_tm_nolrr_lysm.fasta")
+        create_file_empty(args.dir+"/outcome/"+prefix+"_lysm_rlp.fasta")
 
     #s+lysm
-    if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_notm.fasta") != True:
-        lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_notm.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_notm_lysm.txt"
+    if is_file_empty(new_dir+"/"+prefix+"_nopknb_s_notm.fasta") != True:
+        lysm_path = "pfam_scan.pl -fasta "+new_dir+"/"+prefix+"_nopknb_s_notm.fasta"+" -dir "+args.dir+"/hmm/LysM_HMM -outfile "+new_dir+"/"+prefix+"_nopknb_s_notm_lysm.txt"
         subprocess.run(lysm_path, shell=True, check=True)
-        protein_rlp_s_notm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_notm.fasta")
-        lysm = process_pfam(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_notm_lysm.txt", False)
-        generate_protein(protein_rlp_s_notm, lysm, new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_notm_lysm.fasta")
-        protein_nopknb_s_notm_lysm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_notm_lysm.fasta")
-        writeprotein(protein_nopknb_s_notm_lysm,args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_s_lysm.fasta")
+        protein_rlp_s_notm = ProteinToDict(new_dir+"/"+prefix + "_nopknb_s_notm.fasta")
+        lysm = process_pfam(new_dir+"/"+prefix + "_nopknb_s_notm_lysm.txt", False)
+        generate_protein(protein_rlp_s_notm, lysm, new_dir+"/"+prefix + "_nopknb_s_notm_lysm.fasta")
+        protein_nopknb_s_notm_lysm = ProteinToDict(new_dir+"/"+prefix + "_nopknb_s_notm_lysm.fasta")
+        writeprotein(protein_nopknb_s_notm_lysm,args.dir+"/outcome/"+prefix+"_s_lysm.fasta")
     else:
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1] + "_nopknb_s_notm_lysm.fasta")
-        create_file_empty(args.dir+"/outcome/"+args.fasta.split(".")[0].split("/")[-1]+"_s_lysm.fasta")
+        create_file_empty(new_dir+"/"+prefix + "_nopknb_s_notm_lysm.fasta")
+        create_file_empty(args.dir+"/outcome/"+prefix+"_s_lysm.fasta")
 
 if __name__ == '__main__':
     args = parse_args()

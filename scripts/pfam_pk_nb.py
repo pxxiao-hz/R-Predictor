@@ -180,23 +180,24 @@ def main(args):
     clean_fasta(args.fasta)
     new_dir = args.dir+"/tmp"
     os.makedirs(new_dir,exist_ok=True)
-    pkinase = "pfam_scan.pl -fasta "+args.fasta+" -dir "+args.dir+"/hmm/PK_NB_HMM -outfile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_nb.txt"
+    prefix = os.path.splitext(os.path.basename(args.fasta))[0]
+    pkinase = "pfam_scan.pl -fasta "+args.fasta+" -dir "+args.dir+"/hmm/PK_NB_HMM -outfile "+new_dir+"/"+prefix+"_pk_nb.txt"
     subprocess.run(pkinase,shell=True,check=True)
     protein = filterprotein(ProteinToDict(args.fasta))
-    pk,nb = process_pfam(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_nb.txt",True)
-    generate_tkp(pk,protein,args.dir+"/outcome"+"/"+args.fasta.split("/")[-1].split(".")[0]+"_tkp.fasta")
-    generate_protein(protein,pk,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk.fasta")
-    generate_protein(protein,nb,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb.fasta")
-    pk_protein = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk.fasta")
-    nb_protein = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nb.fasta")
+    pk,nb = process_pfam(new_dir+"/"+prefix+"_pk_nb.txt",True)
+    generate_tkp(pk,protein,args.dir+"/outcome"+"/"+prefix+"_tkp.fasta")
+    generate_protein(protein,pk,new_dir+"/"+prefix+"_pk.fasta")
+    generate_protein(protein,nb,new_dir+"/"+prefix+"_nb.fasta")
+    pk_protein = ProteinToDict(new_dir+"/"+prefix+"_pk.fasta")
+    nb_protein = ProteinToDict(new_dir+"/"+prefix+"_nb.fasta")
     pknb = {**pk_protein,**nb_protein}
-    generate_protein_nopknb(protein,pknb,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb.fasta")
+    generate_protein_nopknb(protein,pknb,new_dir+"/"+prefix+"_nopknb.fasta")
     
     #pk_tm
-    pk_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.txt"
+    pk_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+prefix+"_pk.fasta"+" > "+new_dir+"/"+prefix+"_pk_tm.txt"
     subprocess.run(pk_tm_env,shell=True,check=True)
-    pk_tm = tmhmm(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.txt")
-    generate_protein(pk_protein,pk_tm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.fasta")
+    pk_tm = tmhmm(new_dir+"/"+prefix+"_pk_tm.txt")
+    generate_protein(pk_protein,pk_tm,new_dir+"/"+prefix+"_pk_tm.fasta")
 
 if __name__ == '__main__':
     args = parse_args()

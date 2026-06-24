@@ -128,7 +128,7 @@ fasta_prefix() {
     local path="$1"
     local name
     name="$(basename "$path")"
-    printf '%s\n' "${name%%.*}"
+    printf '%s\n' "${name%.*}"
 }
 
 copy_outcomes() {
@@ -154,6 +154,15 @@ copy_outcomes() {
     echo "[*] Copied ${#files[@]} outcome files to ${output_dir}"
 }
 
+clean_sample_workspace() {
+    local protein_path="$1"
+    local prefix
+    prefix="$(fasta_prefix "$protein_path")"
+
+    find "${work_path}/tmp" -maxdepth 1 -name "${prefix}_*" -exec rm -rf {} + 2>/dev/null || true
+    find "${work_path}/outcome" -maxdepth 1 -name "${prefix}_*" -exec rm -rf {} + 2>/dev/null || true
+}
+
 collect_fastas() {
     local input_path="$1"
     if [[ -d "$input_path" ]]; then
@@ -172,6 +181,30 @@ if [[ "${#protein_paths[@]}" -eq 0 ]]; then
     exit 1
 fi
 
+if [[ -d "$fasta" && -n "$output_dir" ]]; then
+    input_dir="$(cd "$fasta" && pwd)"
+    mkdir -p "$output_dir"
+    resolved_output_dir="$(cd "$output_dir" && pwd)"
+    if [[ "$input_dir" == "$resolved_output_dir" ]]; then
+        echo "[!] Error: --output-dir cannot be the same directory as the input FASTA directory." >&2
+        echo "[!] Use a separate result directory, for example: ${input_dir}/R-Predictor_results" >&2
+        exit 1
+    fi
+fi
+
+declare -A seen_prefixes=()
+for protein_path in "${protein_paths[@]}"; do
+    prefix="$(fasta_prefix "$protein_path")"
+    if [[ -n "${seen_prefixes[$prefix]:-}" ]]; then
+        echo "[!] Error: input files produce the same sample prefix '${prefix}':" >&2
+        echo "    - ${seen_prefixes[$prefix]}" >&2
+        echo "    - ${protein_path}" >&2
+        echo "[!] Rename one input file so its name before the final extension is unique." >&2
+        exit 1
+    fi
+    seen_prefixes["$prefix"]="$protein_path"
+done
+
 echo "[*] work_path: ${work_path}"
 echo "[*] Preparing to process ${#protein_paths[@]} protein files"
 
@@ -181,6 +214,7 @@ for protein_path in "${protein_paths[@]}"; do
     echo "fasta file: ${file_name}"
     printf '==================================================\n'
 
+    clean_sample_workspace "$protein_path"
     run_in_conda "$pfam_env" python "${script_dir}/pfam_pk_nb.py" --fasta "$protein_path" --dir "$work_path"
     run_in_conda "$signalp_env" python "${script_dir}/signal_rlk_rlp.py" --fasta "$protein_path" --dir "$work_path"
     run_esm_lrr "$protein_path"

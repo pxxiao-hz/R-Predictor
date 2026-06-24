@@ -112,31 +112,32 @@ def tmhmm(path):
 
 def main(args):
     new_dir = args.dir+"/tmp"
-    if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.fasta") != True:
-        rlk_signal = "signalp6 --fastafile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.fasta"+" --format txt --organism eukarya --output_dir "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_signal"+" --mode fast"
+    prefix = os.path.splitext(os.path.basename(args.fasta))[0]
+    if is_file_empty(new_dir+"/"+prefix+"_pk_tm.fasta") != True:
+        rlk_signal = "signalp6 --fastafile "+new_dir+"/"+prefix+"_pk_tm.fasta"+" --format txt --organism eukarya --output_dir "+new_dir+"/"+prefix+"_pk_tm_signal"+" --mode fast"
         subprocess.run(rlk_signal, shell=True, check=True)
-        rlk_s = signalp(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_signal/output.gff3")
-        protein_pk_tm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm.fasta")
-        generate_protein(protein_pk_tm,rlk_s,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s.fasta")
+        rlk_s = signalp(new_dir+"/"+prefix+"_pk_tm_signal/output.gff3")
+        protein_pk_tm = ProteinToDict(new_dir+"/"+prefix+"_pk_tm.fasta")
+        generate_protein(protein_pk_tm,rlk_s,new_dir+"/"+prefix+"_pk_tm_s.fasta")
     else:
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_pk_tm_s.fasta")
+        create_file_empty(new_dir+"/"+prefix+"_pk_tm_s.fasta")
 
-    if is_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb.fasta") != True:
-        rlp_signal = "signalp6 --fastafile "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb.fasta"+" --format txt --organism eukarya --output_dir "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_signal"+" --mode fast"
+    if is_file_empty(new_dir+"/"+prefix+"_nopknb.fasta") != True:
+        rlp_signal = "signalp6 --fastafile "+new_dir+"/"+prefix+"_nopknb.fasta"+" --format txt --organism eukarya --output_dir "+new_dir+"/"+prefix+"_nopknb_signal"+" --mode fast"
         subprocess.run(rlp_signal, shell=True, check=True)
-        rlp_s = signalp(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_signal/output.gff3")
-        protein_no_pknb = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb.fasta")
-        generate_protein(protein_no_pknb,rlp_s,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta")
+        rlp_s = signalp(new_dir+"/"+prefix+"_nopknb_signal/output.gff3")
+        protein_no_pknb = ProteinToDict(new_dir+"/"+prefix+"_nopknb.fasta")
+        generate_protein(protein_no_pknb,rlp_s,new_dir+"/"+prefix+"_nopknb_s.fasta")
     else:
-        create_file_empty(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta")
+        create_file_empty(new_dir+"/"+prefix+"_nopknb_s.fasta")
 
-    rlp_s_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta"+" > "+new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.txt"
+    rlp_s_tm_env = "perl /home/pxxiao/tools/tmhmm/tmhmm-2.0c/bin/tmhmm "+new_dir+"/"+prefix+"_nopknb_s.fasta"+" > "+new_dir+"/"+prefix+"_nopknb_s_tm.txt"
     subprocess.run(rlp_s_tm_env,shell=True,check=True)
-    rlp_s_tm = tmhmm(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.txt")
-    protein_rlp_s = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s.fasta")
-    generate_protein(protein_rlp_s,rlp_s_tm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.fasta")
-    protein_rlp_s_tm = ProteinToDict(new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_tm.fasta")
-    generate_protein_nopknb(protein_rlp_s,protein_rlp_s_tm,new_dir+"/"+args.fasta.split(".")[0].split("/")[-1]+"_nopknb_s_notm.fasta")
+    rlp_s_tm = tmhmm(new_dir+"/"+prefix+"_nopknb_s_tm.txt")
+    protein_rlp_s = ProteinToDict(new_dir+"/"+prefix+"_nopknb_s.fasta")
+    generate_protein(protein_rlp_s,rlp_s_tm,new_dir+"/"+prefix+"_nopknb_s_tm.fasta")
+    protein_rlp_s_tm = ProteinToDict(new_dir+"/"+prefix+"_nopknb_s_tm.fasta")
+    generate_protein_nopknb(protein_rlp_s,protein_rlp_s_tm,new_dir+"/"+prefix+"_nopknb_s_notm.fasta")
 
 
 if __name__ == '__main__':
